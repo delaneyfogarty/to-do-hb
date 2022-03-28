@@ -35,12 +35,10 @@ async function displayTodos() {
     // fetch the todos
   todosEl.textContent = '';
 
-  const todoList = await getTodos();
+  const todoData = await getTodos();
 
-  for (let item of todoList) {
-    const itemEl = document.createElement('p');
-
-    itemEl.textContent = `${item.todo}`;
+  for (let item of todoData) {
+    const itemEl = renderTodo(item);
 
     if (item.complete) {
       itemEl.classList.add('is_complete');
@@ -48,12 +46,12 @@ async function displayTodos() {
       itemEl.addEventListener('click', async () => {
         await completeTodo(item.id);
         displayTodos();
-
       });
-    }
-    todoList.append(itemEl);
-  }
 
+    }
+// todoData.append(itemEl);
+    todosEl.append(itemEl);
+  }
     // display the list of todos
 
     // be sure to give each todo an event listener
@@ -63,7 +61,7 @@ async function displayTodos() {
 
 // add an on load listener that fetches and displays todos on load
 window.addEventListener('load', () => {
-    displayTodos();
+  displayTodos();
 });
 
 logoutButton.addEventListener('click', () => {

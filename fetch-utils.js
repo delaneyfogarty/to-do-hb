@@ -8,7 +8,11 @@ export async function createTodo(todo) {
     // create a single incomplete todo with the correct 'todo' property for this user in supabase
     const response = await client
     .from('todos')
-    .insert(todo);
+    .insert({
+        todo: todo.todo,
+        complete: false,
+        user_id: client.auth.user().id
+    });
 
     return checkError(response);
 }
@@ -19,7 +23,7 @@ export async function deleteAllTodos() {
     const response = await client
     .from ('todos')
     .delete()
-    .match({ user_id: user.id})
+    .match({ user_id: user.id });
 
     return checkError(response);
 }
@@ -28,7 +32,7 @@ export async function getTodos() {
     // get all todos for this user from supabase
     const response = await client
     .from('todos')
-    .select('*')
+    .select('*');
 
     return checkError(response);
 }
@@ -38,7 +42,7 @@ export async function completeTodo(id) {
     const response = await client
     .from('todos')
     .update({ complete: true })
-    .match({ id })
+    .match({ id });
 
     return checkError(response);
 }
@@ -53,13 +57,13 @@ export function checkAuth() {
     if (!user) location.replace('../');
 }
 
-export function redirectIfLoggedIn() {
+export async function redirectIfLoggedIn() {
     if (await getUser()) {
         location.replace('./todos');
     }
 }
 
-export function signupUser(email, password) {
+export async function signupUser(email, password) {
     const response = await client.auth.signUp({ email, password });
 
     return response.user;
